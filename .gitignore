@@ -1,0 +1,34 @@
+# Node.js / NPM dependencies (backend)
+node_modules/
+
+# Build files (frontend and backend)
+frontend/dist/
+backend/dist/
+
+# Logs
+logs/
+*.log
+
+# Environment variables
+*.env
+
+# IDE files
+.vscode/
+.idea/
+
+# OS specific
+.DS_Store
+Thumbs.db
+
+# Frontend build (React/Vue)
+frontend/build/
+
+# Backend logs, coverage, etc.
+backend/coverage/
+
+# Docker files
+.docker/
+
+# Lock files (optional, but generally useful to keep)
+frontend/package-lock.json
+backend/package-lock.json
