@@ -2,18 +2,22 @@
 /frontend/node_modules/
 /backend/node_modules/
 
+# Lock Files
+/backend/package-lock.json
+/frontend/package-lock.json
+
 # Editor
-/frontend/node_modules/.vscode/*
-/backend/node_modules/.vscode/*
+/frontend/.vscode/
+/backend/.vscode/
+
 # Logs
 logs/
 *.log
 npm-debug.log*
+
 # Env files
 /backend/.env
+
 # Build
-/backend/dist
-/build
-# Lock Files
-/backend/package-lock.json
-/frontend/package-lock.json
+/backend/dist/
+/build/
