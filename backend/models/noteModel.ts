@@ -1,21 +1,24 @@
-import { DataTypes, Model } from 'sequelize';
+import { Model, DataTypes } from 'sequelize';
 import { sequelize } from '../config/db';
+import Category from './categoryModel'; // Import Category model
 
-interface NoteAttributes {
-  id?: number;
-  title: string;
-  content: string;
-  is_deleted?: boolean;
+class Note extends Model {
+  public id!: number;
+  public title!: string;
+  public content!: string;
+  public is_deleted!: boolean;
+  public createdAt!: Date;
+  public updatedAt!: Date;
+  public categoryId!: number; // Optional: Link to Category
+  public is_pinned!: boolean;
 }
-
-class Note extends Model<NoteAttributes> {}
 
 Note.init(
   {
     id: {
       type: DataTypes.INTEGER,
-      autoIncrement: true,
       primaryKey: true,
+      autoIncrement: true,
     },
     title: {
       type: DataTypes.STRING,
@@ -29,13 +32,25 @@ Note.init(
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
+    categoryId: {
+      type: DataTypes.INTEGER,
+      allowNull:false,
+      references: {
+        model: 'categories',
+        key: 'id',
+      },
+    },
+    is_pinned: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
   },
   {
     sequelize,
-    modelName: 'Note',
     tableName: 'notes',
-    timestamps: true,
   }
 );
+
+Note.belongsTo(Category, { foreignKey: 'categoryId' }); // One-to-many relationship with Category
 
 export default Note;

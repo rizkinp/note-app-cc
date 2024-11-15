@@ -1,11 +1,11 @@
 import express from 'express';
 import { connectDB } from '../config/db';
-import noteRoutes from '../routes/noteRoutes';
+import apiRoutes from '../routes/apiRoutes';
 
 const app = express();
 
 app.use(express.json());
-app.use('/api', noteRoutes);
+app.use('/api', apiRoutes);
 
 const startServer = async () => {
   await connectDB();
