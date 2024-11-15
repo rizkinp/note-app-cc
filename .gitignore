@@ -10,7 +10,7 @@ npm-debug.log*
 .env
 
 # Build
-/dist
+/backend/dist
 /build
 
 # Other files/folders to ignore...
