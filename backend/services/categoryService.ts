@@ -8,17 +8,10 @@ class CategoryService {
             where:{is_deleted : false}
         });
     }
-    //Get All Category 
+    //Get Category by ID 
     async getCategoryById(id: number) {
         return await Category.findAll({
             where: {is_deleted : false}
-        })
-    }
-
-    //Get Category By Name
-    async getCategoryByName(name: string) {
-        return await Category.findAll({
-            where: {name}
         })
     }
 
