@@ -1,16 +1,17 @@
 import { Model, DataTypes } from 'sequelize';
 import { sequelize } from '../config/db';
-import Category from './categoryModel'; // Import Category model
+import Category from './categoryModel'; 
 
 class Note extends Model {
   public id!: number;
   public title!: string;
   public content!: string;
   public is_deleted!: boolean;
+  public is_pinned!: boolean;
+  public is_archived!: boolean;
   public createdAt!: Date;
   public updatedAt!: Date;
-  public categoryId!: number; // Optional: Link to Category
-  public is_pinned!: boolean;
+  public categoryId!: number; 
 }
 
 Note.init(
@@ -32,6 +33,24 @@ Note.init(
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
+    is_pinned: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
+    is_archived: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
+    createdAt: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: DataTypes.NOW,
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: DataTypes.NOW,
+    },
     categoryId: {
       type: DataTypes.INTEGER,
       allowNull:false,
@@ -39,10 +58,6 @@ Note.init(
         model: 'categories',
         key: 'id',
       },
-    },
-    is_pinned: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false,
     },
   },
   {

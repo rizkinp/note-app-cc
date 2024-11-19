@@ -21,6 +21,10 @@ Category.init(
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
+    is_pinned: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
     createdAt: {
       type: DataTypes.DATE,
       allowNull: false,
@@ -30,7 +34,7 @@ Category.init(
       type: DataTypes.DATE,
       allowNull: false,
       defaultValue: DataTypes.NOW,
-    }
+    },
   },
   {
     sequelize,

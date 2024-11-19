@@ -23,17 +23,12 @@ export const createNote = async (req: Request, res: Response) => {
 // Get All Notes with Pagination
 export const getAllNotes = async (req: Request, res: Response) => {
   try {
-    const page = parseInt(req.query.page as string) || 1;
-    const limit = parseInt(req.query.limit as string) || 10;
-    const offset = (page - 1) * limit;
 
-    const { notes, totalCount } = await noteService.getAllNotes(limit, offset);
-
-    const totalPages = Math.ceil(totalCount / limit);
+    const { notes } = await noteService.getAllNotes();
 
     successResponse(
       res,
-      { notes, totalPages, currentPage: page, totalCount },
+      { notes },
       "Notes fetched successfully."
     );
   } catch (error) {
@@ -52,6 +47,8 @@ export const getNoteById = async (req: Request, res: Response) => {
       id: note.id,
       title: note.title,
       content: note.content,
+      is_archived: note.is_archived,
+      is_pinned: note.is_pinned,
       createdAt: note.createdAt,
     };
     successResponse(res, responseNote, "Note fetched successfully.");
@@ -60,7 +57,15 @@ export const getNoteById = async (req: Request, res: Response) => {
   }
 };
 
-// Search Notes
+//Get Note By Category
+export const getNoteByCategory = async (req: Request, res: Response) => {
+  try {
+    const notes = await noteService.getNoteByCategory(Number(req.params.id));
+    successResponse(res, notes, "Notes fetched successfully.");
+  } catch (error) {
+    errorResponse(res, (error as Error).message);
+  }
+}
 // Search Notes
 export const searchNotes = async (req: Request, res: Response) => {
   try {
@@ -124,6 +129,28 @@ export const pinNote = async (req: Request, res: Response) => {
       res,
       note,
       `Note ${is_pinned ? "pinned" : "unpinned"} successfully.`
+    );
+  } catch (error) {
+    errorResponse(res, (error as Error).message);
+  }
+};
+
+// Archive or Unarchive Note
+export const archiveNote = async (req: Request, res: Response) => {
+  try {
+    const { is_archived } = req.body;
+
+    // Validasi is_archived
+    if (typeof is_archived !== "boolean") {
+      return errorResponse(res, "is_archived must be a boolean value.", 400);
+    }
+
+    // Update status arsip
+    const note = await noteService.archiveNote(Number(req.params.id), is_archived);
+    successResponse(
+      res,
+      note,
+      `Note ${is_archived ? "archived" : "unarchived"} successfully.`
     );
   } catch (error) {
     errorResponse(res, (error as Error).message);

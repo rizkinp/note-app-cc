@@ -12,19 +12,21 @@ class NoteService {
   }
 
   // Get All Notes
-  async getAllNotes(limit: number, offset: number) {
+  async getAllNotes() {
     const notes = await Note.findAll({
       where: { is_deleted: false },
       order: [["createdAt", "DESC"]],
-      limit,
-      offset,
     });
 
-    const totalCount = await Note.count({
-      where: { is_deleted: false },
-    });
+    return { notes };
+  }
 
-    return { notes, totalCount };
+  //Get Note by Category
+  async getNoteByCategory(categoryId: number) {
+    return await Note.findAll({
+      where: { categoryId, is_deleted: false },
+      order: [["createdAt", "DESC"]],
+    });
   }
 
   // Get Note by ID
@@ -103,6 +105,15 @@ class NoteService {
       return await Note.update({ is_pinned: isPinned }, { where: { id } });
     } catch (error) {
       throw new Error("Error pinning or unpinning the note.");
+    }
+  }
+
+  // Archive or Unarchive Note
+  async archiveNote(id: number, isArchived: boolean) {
+    try {
+      return await Note.update({ is_archived: isArchived }, { where: { id } });
+    } catch (error) {
+      throw new Error("Error archiving or unarchiving the note.");
     }
   }
 }
