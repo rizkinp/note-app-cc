@@ -10,9 +10,7 @@ class CategoryService {
     }
     //Get Category by ID 
     async getCategoryById(id: number) {
-        return await Category.findAll({
-            where: {is_deleted : false}
-        })
+        return await Category.findByPk(id);
     }
 
     // Create Category
