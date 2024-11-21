@@ -8,7 +8,7 @@ export const createNote = async (req: Request, res: Response) => {
   try {
     const data: CreateNoteDTO = req.body;
 
-    // Validasi input categoryId
+    // Validation ID
     if (!data.categoryId) {
       return errorResponse(res, "categoryId is required.", 400);
     }
@@ -20,7 +20,7 @@ export const createNote = async (req: Request, res: Response) => {
   }
 };
 
-// Get All Notes with Pagination
+// Get All Notes
 export const getAllNotes = async (req: Request, res: Response) => {
   try {
 
@@ -66,6 +66,15 @@ export const getNoteByCategory = async (req: Request, res: Response) => {
     errorResponse(res, (error as Error).message);
   }
 }
+//Get Notes by isPinned
+export const getNotesByIsPinned = async (req: Request, res: Response) => {
+  try {
+    const notes = await noteService.getNotesByIsPinned();
+    successResponse(res, notes, "Notes fetched successfully.");
+  } catch (error) {
+    errorResponse(res, (error as Error).message);
+  }
+}
 // Search Notes
 export const searchNotes = async (req: Request, res: Response) => {
   try {
@@ -75,7 +84,7 @@ export const searchNotes = async (req: Request, res: Response) => {
     const sortOrder = (req.query.sort as 'ASC' | 'DESC') ?? 'DESC'; // urutan sort (ASC / DESC)
     const categoryId = req.query.categoryId ? Number(req.query.categoryId) : undefined; // kategori (opsional)
 
-    // Pencarian catatan
+    
     const notes = await noteService.searchNotes(query, startDate, endDate, sortOrder, categoryId);
 
     if (notes.length === 0) {
