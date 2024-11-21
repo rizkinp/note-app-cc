@@ -22,10 +22,9 @@ export const getAllCategories = async (req: Request, res: Response) => {
     }
 }
 
-export const getCategoryByName = async (req: Request, res: Response) => {
-    const name = req.params.name;
+export const getCategoryById = async (req: Request, res: Response) => {
     try {
-        const category = await categoryService.getCategoryByName(name);
+        const category = await categoryService.getCategoryById(Number(req.params.id));
         successResponse(res, category, "Category fetched successfully.");
     } catch (error) {
         errorResponse(res, (error as Error).message);
