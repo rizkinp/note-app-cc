@@ -1,10 +1,11 @@
 import { Router } from 'express';
-import { createNote, deleteNote, getAllNotes, getNoteById, searchNotes, updateNote, pinNote, getNoteByCategory, archiveNote } from '../controllers/noteController';
+import { createNote, deleteNote, getAllNotes, getNoteById, searchNotes, updateNote, pinNote, getNoteByCategory, archiveNote, getNotesByIsPinned } from '../controllers/noteController';
 
 const router = Router();
 
 router.post('/', createNote);
 router.get('/', getAllNotes);
+router.get('/pinned', getNotesByIsPinned);
 router.get('/:id', getNoteById);
 router.get('/q', searchNotes); 
 router.get('/category/:id', getNoteByCategory);

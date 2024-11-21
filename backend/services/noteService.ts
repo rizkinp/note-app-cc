@@ -42,17 +42,25 @@ class NoteService {
     });
   }
 
+  //Get Notes by isPinned
+  async getNotesByIsPinned() {
+    return await Note.findAll({
+      where: { is_pinned : true, is_deleted: false },
+      order: [["createdAt", "DESC"]],
+    });
+  }
+
   // Search Notes
   async searchNotes(
     query: string,
     startDate: string,
     endDate: string,
     sortOrder: 'ASC' | 'DESC',
-    categoryId?: number // Menambahkan filter berdasarkan kategori, opsional
+    categoryId?: number 
   ) {
     const whereCondition: any = { is_deleted: false };
   
-    // Filter berdasarkan kata kunci di title dan content
+    
     if (query) {
       whereCondition[Op.or] = [
         { title: { [Op.like]: `%${query}%` } },
@@ -60,27 +68,25 @@ class NoteService {
       ];
     }
   
-    // Filter berdasarkan tanggal (startDate dan endDate)
+
     if (startDate && !isNaN(Date.parse(startDate))) {
       whereCondition.createdAt = {
-        [Op.gte]: new Date(startDate), // Tanggal mulai
+        [Op.gte]: new Date(startDate), 
       };
     }
     if (endDate && !isNaN(Date.parse(endDate))) {
       whereCondition.createdAt = {
-        [Op.lte]: new Date(endDate), // Tanggal sampai
+        [Op.lte]: new Date(endDate), 
       };
     }
   
-    // Filter berdasarkan kategori (jika ada)
     if (categoryId) {
       whereCondition.categoryId = categoryId;
     }
   
-    // Mencari data berdasarkan kondisi
     return await Note.findAll({
       where: whereCondition,
-      order: [['createdAt', sortOrder]], // Urutkan berdasarkan createdAt sesuai sortOrder
+      order: [['createdAt', sortOrder]], 
     });
   }
   

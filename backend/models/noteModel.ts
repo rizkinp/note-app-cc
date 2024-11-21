@@ -66,6 +66,6 @@ Note.init(
   }
 );
 
-Note.belongsTo(Category, { foreignKey: 'categoryId' }); // One-to-many relationship with Category
+Note.belongsTo(Category, { foreignKey: 'categoryId' });
 
 export default Note;

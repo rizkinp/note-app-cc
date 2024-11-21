@@ -1,16 +1,16 @@
 import express from 'express';
-import cors from 'cors'; // Import cors
+import cors from 'cors'; 
 import { connectDB } from '../config/db';
 import apiRoutes from '../routes/apiRoutes';
 
 
 const app = express();
 
-app.use(cors()); // Gunakan CORS middleware
+app.use(cors()); 
 app.use(express.json());
 app.use('/api', apiRoutes);
 app.use(cors({
-  origin: 'http://localhost:5173', // Ganti dengan domain frontend Anda
+  origin: 'http://localhost:5173',
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
