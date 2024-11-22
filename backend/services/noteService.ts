@@ -111,7 +111,7 @@ class NoteService {
   // Archive or Unarchive Note
   async archiveNote(id: number, isArchived: boolean) {
     try {
-      return await Note.update({ is_archived: isArchived }, { where: { id } });
+      return await Note.update({ is_archived: isArchived, is_pinned: false }, { where: { id } });
     } catch (error) {
       throw new Error("Error archiving or unarchiving the note.");
     }
