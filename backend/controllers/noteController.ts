@@ -58,9 +58,9 @@ export const getNoteById = async (req: Request, res: Response) => {
 };
 
 //Get Note By Category
-export const getNoteByCategory = async (req: Request, res: Response) => {
+export const getNotesByCategory = async (req: Request, res: Response) => {
   try {
-    const notes = await noteService.getNoteByCategory(Number(req.params.id));
+    const notes = await noteService.getNotesByCategory(Number(req.params.id));
     successResponse(res, notes, "Notes fetched successfully.");
   } catch (error) {
     errorResponse(res, (error as Error).message);
@@ -75,17 +75,24 @@ export const getNotesByIsPinned = async (req: Request, res: Response) => {
     errorResponse(res, (error as Error).message);
   }
 }
+//Get Notes by isArchived
+export const getNotesByIsArchived = async (req: Request, res: Response) => {
+  try {
+    const notes = await noteService.getNotesByIsArchived();
+    successResponse(res, notes, "Notes fetched successfully.");
+  } catch (error) {
+    errorResponse(res, (error as Error).message);
+  }
+}
 // Search Notes
 export const searchNotes = async (req: Request, res: Response) => {
   try {
-    const query = req.query.search as string || ''; // kata kunci pencarian
-    const startDate = req.query.startDate as string || ''; // tanggal mulai
-    const endDate = req.query.endDate as string || ''; // tanggal akhir
-    const sortOrder = (req.query.sort as 'ASC' | 'DESC') ?? 'DESC'; // urutan sort (ASC / DESC)
-    const categoryId = req.query.categoryId ? Number(req.query.categoryId) : undefined; // kategori (opsional)
+    const query = req.query.search as string || ''; // Kata kunci pencarian
+    const sortOrder = (req.query.sortOrder as 'ASC' | 'DESC') || 'DESC'; // Urutan sort (ASC/DESC)
+    const dateFilter = req.query.dateFilter as 'newest' | 'oldest' | undefined; // Filter berdasarkan tanggal
 
-    
-    const notes = await noteService.searchNotes(query, startDate, endDate, sortOrder, categoryId);
+    // Memanggil fungsi searchNotes dari service
+    const notes = await noteService.searchNotes(query, sortOrder, dateFilter);
 
     if (notes.length === 0) {
       return errorResponse(res, 'No notes found.', 404);
@@ -96,7 +103,6 @@ export const searchNotes = async (req: Request, res: Response) => {
     errorResponse(res, (error as Error).message);
   }
 };
-
 
 // Update Note
 export const updateNote = async (req: Request, res: Response) => {
