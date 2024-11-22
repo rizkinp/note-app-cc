@@ -25,6 +25,15 @@ export function useNote() {
     }
   };
 
+  const fetchNotesByIsArchived = async () => {
+    try {
+      const response = await api.get('/notes/archived');
+      notes.value = response.data.data;
+    } catch (err) {
+      error.value = `Error fetching notes by isArchived: ${err.message || err}`;
+    }
+  };
+
   // Search notes with filters
   const dataFilter = async ({ query = '', sortOrder = '', dateFilter = '' } = {}) => {
     try {
@@ -117,6 +126,7 @@ export function useNote() {
     error,
     fetchNotes,
     fetchNoteById,
+    fetchNotesByIsArchived,
     dataFilter,
     fetchNotesByCategory,
     createNote,
