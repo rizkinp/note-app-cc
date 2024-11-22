@@ -7,7 +7,7 @@
     <!-- Main Content -->
     <div class="flex-1 flex overflow-hidden">
       <!-- Note List -->
-      <NoteList :notes="filteredNotes" @sortOrder="sortNotes" @edit-note="setCurrentNote" @search-notes="searchNotes" @toggle-archived="archiveNoteHandler"
+      <NoteList :notes="filteredNotes" :isArchived="isArchived" @sortOrder="sortNotes" @edit-note="setCurrentNote" @search-notes="searchNotes" @toggle-archived="archiveNoteHandler"
         class="w-2/4 h-full overflow-y-auto" />
 
       <!-- Note Editor -->
@@ -33,10 +33,11 @@ export default {
     NoteEditor
   },
   setup() {
-    const { notes, fetchNotes, fetchNotesByCategory, createNote, updateNote, dataFilter, archiveNote } = useNote();
+    const { notes, fetchNotes, fetchNotesByCategory, fetchNotesByIsArchived, createNote, updateNote, dataFilter, archiveNote } = useNote();
     const { categories, fetchCategories, createCategory } = useCategory();
     const currentNote = ref(null);
     const searchQuery = ref("");
+    const isArchived = ref(false);
 
     // Fetch initial data
     onMounted(() => {
@@ -67,6 +68,10 @@ export default {
     const filterNotes = (filter) => {
       if (filter === 'all') {
         fetchNotes();
+      } else if (filter === 'archived') {
+        isArchived.value = true;
+        console.log(isArchived.value);
+        fetchNotesByIsArchived();
       } else {
         fetchNotesByCategory(filter);
       }
@@ -107,6 +112,7 @@ export default {
       createNote,
       updateNoteHandler,
       sortNotes,
+      isArchived,
     };
   },
 };

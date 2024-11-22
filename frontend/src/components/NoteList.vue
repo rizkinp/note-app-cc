@@ -28,7 +28,15 @@
         </ul>
       </div>
     </div>
-
+    <!-- Clear ALL Archive Button -->
+    <button
+      @click="clearAllArchive"
+      v-if="isArchived"
+      class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+    >
+      Clear All Archives
+    </button>
+    <!-- Note List -->
     <ul class="space-y-4">
       <li v-for="note in notes" :key="note.id" class="rounded-lg shadow-sm hover:bg-gray-100 flex items-center justify-between p-2">
         <!-- Checkbox for archiving -->
@@ -51,6 +59,8 @@
               <div class="text-sm text-gray-600 content-preview" v-html="truncateContent(note.content)"></div>
             </div>
           </div>
+          <!--Delete Arsip-->
+          <img v-if="isArchived" src="../components/icons/ic_delete.png" alt="Arsip" class="w-5 h-5 ml-auto" />
           <!-- Pinned Icon -->
           <img v-if="note.is_pinned" src="../components/icons/ic_pin.png" alt="Pinned" class="w-5 h-5 ml-auto" />
         </a>
@@ -68,6 +78,10 @@ export default {
       type: Array,
       required: true,
     },
+    isArchived: {
+      type: Boolean,
+      default: false,
+    }
   },
   data() {
     return {
@@ -81,6 +95,9 @@ export default {
     },
     toggleDropdown() {
       this.dropdownOpen = !this.dropdownOpen;
+    },
+    clearAllArchive() {
+      this.$emit("clear-all-archive");
     },
     setSortOrder(order) {
       let sortOrder = '';  // Default to no sorting
