@@ -28,7 +28,7 @@ export function useCategory() {
   const createCategory = async (data) => {
     try {
       await api.post('/category', data);
-      fetchCategories(); // Refresh data
+      fetchCategories();
     } catch (err) {
       error.value = err;
     }

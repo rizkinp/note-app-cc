@@ -1,6 +1,7 @@
-import { Model, DataTypes } from 'sequelize';
-import { sequelize } from '../config/db';
-import Category from './categoryModel'; 
+import { Model, DataTypes } from "sequelize";
+import { sequelize } from "../config/db";
+import Category from "./categoryModel"; // Import Category model
+import User from "./userModel"; // Import User model
 
 class Note extends Model {
   public id!: number;
@@ -9,9 +10,10 @@ class Note extends Model {
   public is_deleted!: boolean;
   public is_pinned!: boolean;
   public is_archived!: boolean;
+  public categoryId!: number;  // Foreign key for Category
+  public userId!: number;  // Foreign key for User
   public createdAt!: Date;
   public updatedAt!: Date;
-  public categoryId!: number; 
 }
 
 Note.init(
@@ -41,6 +43,22 @@ Note.init(
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
+    categoryId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: "categories",
+        key: "id",
+      },
+    },
+    userId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: "users",  // Foreign key to users table
+        key: "id",
+      },
+    },
     createdAt: {
       type: DataTypes.DATE,
       allowNull: false,
@@ -51,21 +69,15 @@ Note.init(
       allowNull: false,
       defaultValue: DataTypes.NOW,
     },
-    categoryId: {
-      type: DataTypes.INTEGER,
-      allowNull:false,
-      references: {
-        model: 'categories',
-        key: 'id',
-      },
-    },
   },
   {
     sequelize,
-    tableName: 'notes',
+    tableName: "notes",
   }
 );
 
-Note.belongsTo(Category, { foreignKey: 'categoryId' });
+// Define relationships
+Note.belongsTo(Category, { foreignKey: "categoryId" });
+Note.belongsTo(User, { foreignKey: "userId" });
 
 export default Note;
