@@ -87,9 +87,16 @@ class NoteService {
     return { affectedRows };
   }
 
-  // Soft Delete Note
+  // Soft Delete Note by ID
   async deleteNote(id: number) {
-    return await Note.update({ is_deleted: true }, { where: { id } });
+    return await Note.update({ is_deleted: true }, { 
+      where: { id, is_archived: true },
+    });
+  }
+
+  //Soft delete Notes ALL
+  async deleteAllNotes() {
+    return await Note.update({ is_deleted: true }, { where: { is_archived: true } });
   }
 
   // Pin or Unpin Note

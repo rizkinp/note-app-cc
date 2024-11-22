@@ -128,6 +128,16 @@ export const deleteNote = async (req: Request, res: Response) => {
   }
 };
 
+// Delete All Notes
+export const deleteAllNotes = async (req: Request, res: Response) => {
+  try {
+    const notes = await noteService.deleteAllNotes();
+    successResponse(res, notes, "All notes deleted successfully.");
+  } catch (error) {
+    errorResponse(res, (error as Error).message);
+  }
+};
+
 // Pin or Unpin Note
 export const pinNote = async (req: Request, res: Response) => {
   try {
