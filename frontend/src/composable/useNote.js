@@ -12,7 +12,7 @@ export function useNote() {
       const response = await api.get('/notes');
       notes.value = response.data.data.notes;
     } catch (err) {
-      error.value = err;
+      error.value = `Error fetching notes: ${err.message || err}`;
     }
   };
 
@@ -21,16 +21,31 @@ export function useNote() {
       const response = await api.get(`/notes/${id}`);
       note.value = response.data.data;
     } catch (err) {
-      error.value = err;
+      error.value = `Error fetching note by ID: ${err.message || err}`;
     }
   };
 
-  const searchNotes = async (query) => {
+  // Search notes with filters
+  const dataFilter = async ({ query = '', sortOrder = '', dateFilter = '' } = {}) => {
     try {
-      const response = await api.get(`/notes/q`, { params: { q: query } });
+      const params = {};
+
+      if (sortOrder) {
+        params.sortOrder = sortOrder;  // If sortOrder is provided, use it
+      }
+
+      if (dateFilter) {
+        params.dateFilter = dateFilter;  // If dateFilter is provided, use it
+      }
+
+      if (query) {
+        params.q = query;
+      }
+
+      const response = await api.get('/notes/q', { params });
       notes.value = response.data.data;
     } catch (err) {
-      error.value = err;
+      error.value = `Error searching notes: ${err.message || err}`;
     }
   };
 
@@ -39,28 +54,30 @@ export function useNote() {
       const response = await api.get(`/notes/category/${categoryId}`);
       notes.value = response.data.data;
     } catch (err) {
-      error.value = err;
+      error.value = `Error fetching notes by category: ${err.message || err}`;
     }
   };
 
   const createNote = async (data) => {
     try {
-      // Kirim data dengan categoryId
-      await api.post('/notes', { ...data, categoryId: data.categoryId });
-      fetchNotes();
+      // Pastikan categoryId ada di data
+      if (data.categoryId) {
+        await api.post('/notes', { ...data });
+        fetchNotes();
+      } else {
+        error.value = 'Category ID is required to create a note';
+      }
     } catch (err) {
-      error.value = err;
+      error.value = `Error creating note: ${err.message || err}`;
     }
   };
 
   const updateNote = async (id, data) => {
     try {
       await api.put(`/notes/${id}`, data);
-      console.log(data);
       fetchNotes();
     } catch (err) {
-      error.value = err;
-
+      error.value = `Error updating note: ${err.message || err}`;
     }
   };
 
@@ -69,8 +86,7 @@ export function useNote() {
       await api.delete(`/notes/${id}`);
       fetchNotes();
     } catch (err) {
-      error.value = err;
-      console.log(err);
+      error.value = `Error deleting note: ${err.message || err}`;
     }
   };
 
@@ -79,18 +95,21 @@ export function useNote() {
       await api.put(`/notes/${id}/pin`);
       fetchNotes();
     } catch (err) {
-      error.value = err;
+      error.value = `Error pinning note: ${err.message || err}`;
     }
   };
 
-  const archiveNote = async (id) => {
+  const archiveNote = async (id, data) => {
     try {
-      await api.put(`/notes/${id}/archive`);
+      // Mengirim permintaan PUT ke server untuk mengubah status arsip
+      await api.put(`/notes/${id}/archive`, data);
+      // Mengambil catatan terbaru setelah pembaruan
       fetchNotes();
     } catch (err) {
-      error.value = err;
+      error.value = `Error archiving note: ${err.message || err}`;
     }
   };
+
 
   return {
     notes,
@@ -98,7 +117,7 @@ export function useNote() {
     error,
     fetchNotes,
     fetchNoteById,
-    searchNotes,
+    dataFilter,
     fetchNotesByCategory,
     createNote,
     updateNote,

@@ -1,6 +1,7 @@
 <template>
   <aside class="top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0 bg-gray-800 text-white" aria-label="Sidebar">
     <div class="h-full px-4 py-6">
+      <!-- App Name -->
       <div class="text-2xl font-semibold mb-6 text-center">
         <span class="text-blue-400">MyApp</span>
       </div>
@@ -19,16 +20,16 @@
 
         <!-- Category Menu -->
         <li>
-          <button type="button" @click="toggleDropdown" class="flex items-center w-full p-8 text-gray-300 rounded-lg hover:bg-gray-700 transition duration-300">
+          <button type="button" @click="toggleDropdown" class="flex items-center w-full p-2 text-gray-300 rounded-lg hover:bg-gray-700 transition duration-300">
             <svg class="w-5 h-5 text-gray-400 mr-3" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 21">
               <path d="M15 12a1 1 0 0 0 .962-.726l2-7A1 1 0 0 0 17 3H3.77L3.175.745A1 1 0 0 0 2.208 0H1a1 1 0 0 0 0 2h.438l.6 2.255v.019l2 7 .746 2.986A3 3 0 1 0 9 17a2.966 2.966 0 0 0-.184-1h2.368c-.118.32-.18.659-.184 1a3 3 0 1 0 3-3H6.78l-.5-2H15Z" />
             </svg>
             <span class="flex-1 text-left text-sm">Category</span>
-            <svg class="w-3 h-3 ml-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+            <svg class="w-3 h-3 ml-2 transform transition-transform" :class="{'rotate-180': isDropdownOpen}" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
               <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4" />
             </svg>
           </button>
-          <ul :id="'dropdown-example'" :class="{ 'hidden': !isDropdownOpen }" class="py-2 space-y-2 pl-8">
+          <ul :id="'dropdown-example'" :class="{ 'hidden': !isDropdownOpen, 'transition-all duration-300': true }" class="py-2 space-y-2 pl-8">
             <li v-for="category in categories" :key="category.id">
               <a href="#" @click.prevent="filterNotes(category.id)" class="flex items-center p-2 text-gray-300 rounded-lg hover:bg-gray-700 transition duration-300">
                 <span class="text-sm">{{ category.name }}</span>
@@ -36,7 +37,6 @@
             </li>
             <!-- Add Category -->
             <li>
-              <!-- If showCategoryInput is false, display a button. If true, display an input field. -->
               <template v-if="!showCategoryInput">
                 <button @click="showCategoryInput = true" class="flex items-center p-2 text-gray-300 rounded-lg hover:bg-gray-700 transition duration-300">
                   <svg class="w-5 h-5 text-gray-400 mr-3" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
@@ -47,7 +47,7 @@
               </template>
               <template v-else>
                 <!-- Input for Adding Category -->
-                <input v-model="newCategory" @keyup.enter="createCategory" type="text" placeholder="Enter category name" class="w-full p-2 mt-2 text-white bg-transparent border-none focus:outline-none" />
+                <input v-model="newCategory" @keyup.enter="createCategory" type="text" placeholder="Enter category name" class="w-full p-2 mt-2 text-white bg-transparent border-2 border-gray-600 focus:outline-none focus:border-blue-400" />
               </template>
             </li>
           </ul>
