@@ -1,14 +1,15 @@
 <template>
   <div class="flex h-screen overflow-hidden">
     <!-- Sidebar -->
-    <SidebarComponent :categories="categories" @filter-notes="filterNotes" @create-category="createCategory"
+    <SidebarComponent :categories="categories" @filter-notes="filterNotes" @create-category="createCategory" @delete-category="deleteCategoryHandler"
       class="w-64 h-full" />
 
     <!-- Main Content -->
     <div class="flex-1 flex overflow-hidden">
       <!-- Note List -->
-      <NoteList :notes="filteredNotes" :isArchived="isArchived" @sortOrder="sortNotes" @edit-note="setCurrentNote" @search-notes="searchNotes" @toggle-archived="archiveNoteHandler"
-        class="w-2/4 h-full overflow-y-auto" />
+      <NoteList :notes="filteredNotes" :isArchived="isArchived" @sortOrder="sortNotes" @edit-note="setCurrentNote"
+        @search-notes="searchNotes" @toggle-archived="archiveNoteHandler" @deleteNote="deleteNoteHandler"
+        @deleteAllNotes="deleteAllNotesHandler" class="w-2/4 h-full overflow-y-auto" />
 
       <!-- Note Editor -->
       <NoteEditor :currentNote="currentNote" :categories="categories" @update-note="updateNoteHandler"
@@ -33,8 +34,8 @@ export default {
     NoteEditor
   },
   setup() {
-    const { notes, fetchNotes, fetchNotesByCategory, fetchNotesByIsArchived, createNote, updateNote, dataFilter, archiveNote } = useNote();
-    const { categories, fetchCategories, createCategory } = useCategory();
+    const { notes, fetchNotes, fetchNotesByCategory, fetchNotesByIsArchived, createNote, updateNote, dataFilter, archiveNote, deleteAllNotes, deleteNote } = useNote();
+    const { categories, fetchCategories, createCategory, deleteCategory } = useCategory();
     const currentNote = ref(null);
     const searchQuery = ref("");
     const isArchived = ref(false);
@@ -44,58 +45,79 @@ export default {
       fetchCategories();
       fetchNotes();
     });
-
-    // Filter notes based on search query
+    // Filter notes
     const filteredNotes = computed(() => {
-      if (!searchQuery.value) {
-        return notes.value;
-      }
-      return notes.value.filter(note =>
-        note.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-        note.content.toLowerCase().includes(searchQuery.value.toLowerCase())
-      );
-    });
+      let sortedNotes = notes.value;
 
-    // Fungsi untuk menangani pengurutan
+      // Pin priority
+      sortedNotes = [...sortedNotes].sort((a, b) => {
+        if (a.is_pinned && !b.is_pinned) return -1;
+        if (!a.is_pinned && b.is_pinned) return 1;
+        return 0;
+      });
+      //Searching
+      if (searchQuery.value) {
+        sortedNotes = sortedNotes.filter(note =>
+          note.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+          note.content.toLowerCase().includes(searchQuery.value.toLowerCase())
+        );
+      }
+      return sortedNotes;
+    });
+    // Sort notes
     const sortNotes = ({ sortOrder, dateFilter }) => {
       dataFilter({ sortOrder, dateFilter });
     };
-
+    // Set current note
     const setCurrentNote = (note) => {
       currentNote.value = note;
     };
-
+    // Filter notes
     const filterNotes = (filter) => {
       if (filter === 'all') {
+        isArchived.value = false;
         fetchNotes();
       } else if (filter === 'archived') {
         isArchived.value = true;
         console.log(isArchived.value);
         fetchNotesByIsArchived();
       } else {
+        isArchived.value = false;
         fetchNotesByCategory(filter);
       }
     };
-
+    // Search
     const searchNotes = (query) => {
       searchQuery.value = query;
     };
-
+    // Archive
     const archiveNoteHandler = async (updatedNote) => {
-  try {
-    // Panggil API untuk memperbarui status arsip
-    await archiveNote(updatedNote.id, { is_archived: updatedNote.is_archived });
-
-    // Setelah berhasil mengarsipkan, perbarui daftar catatan
-    fetchNotes();
-  } catch (error) {
-    console.error("Error archiving note:", error);
-  }
-};
-
+      try {
+        await archiveNote(updatedNote.id, { is_archived: updatedNote.is_archived });
+        fetchNotes();
+      } catch (error) {
+        console.error("Error archiving note:", error);
+      }
+    };
+    // Update Notes
     const updateNoteHandler = (updatedNote) => {
       updateNote(updatedNote.id, updatedNote);
       currentNote.value = null;
+    };
+    // Delete All Notes
+    const deleteAllNotesHandler = () => {
+      deleteAllNotes();
+      isArchived.value = false;
+    };
+    // Delete Note
+    const deleteNoteHandler = (id) => {
+      deleteNote(id);
+      isArchived.value = true;
+    };
+    // Delete Category
+    const deleteCategoryHandler = (id) => {
+      deleteCategory(id);
+      isArchived.value = false;
     };
 
     return {
@@ -113,6 +135,9 @@ export default {
       updateNoteHandler,
       sortNotes,
       isArchived,
+      deleteAllNotesHandler,
+      deleteNoteHandler,
+      deleteCategoryHandler
     };
   },
 };

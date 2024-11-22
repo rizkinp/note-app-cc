@@ -99,6 +99,15 @@ export function useNote() {
     }
   };
 
+  const deleteAllNotes = async () => {
+    try {
+      await api.delete('/notes');
+      fetchNotes();
+    } catch (err) {
+      error.value = `Error deleting all notes: ${err.message || err}`;
+    }
+  };
+
   const pinNote = async (id) => {
     try {
       await api.put(`/notes/${id}/pin`);
@@ -132,6 +141,7 @@ export function useNote() {
     createNote,
     updateNote,
     deleteNote,
+    deleteAllNotes,
     pinNote,
     archiveNote,
   };

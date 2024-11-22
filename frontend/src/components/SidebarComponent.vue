@@ -1,13 +1,11 @@
 <template>
   <aside class="top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0 bg-gray-800 text-white" aria-label="Sidebar">
     <div class="h-full px-4 py-6">
-      <!-- App Name -->
       <div class="text-2xl font-semibold mb-6 text-center">
-        <span class="text-blue-400">MyApp</span>
+        <span class="text-blue-400">Note App</span>
       </div>
-
       <ul class="space-y-4">
-        <!-- All Notes Menu -->
+        <!--All Notes-->
         <li>
           <a href="#" @click.prevent="filterNotes('all')" class="flex items-center p-2 text-gray-300 rounded-lg hover:bg-gray-700 transition duration-300">
             <svg class="w-5 h-5 text-gray-400 mr-3" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 21">
@@ -17,8 +15,7 @@
             <span class="text-sm">All Notes</span>
           </a>
         </li>
-
-        <!-- Category Menu -->
+        <!--Categories-->
         <li>
           <button type="button" @click="toggleDropdown" class="flex items-center w-full p-2 text-gray-300 rounded-lg hover:bg-gray-700 transition duration-300">
             <svg class="w-5 h-5 text-gray-400 mr-3" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 21">
@@ -30,36 +27,36 @@
             </svg>
           </button>
           <ul :id="'dropdown-example'" :class="{ 'hidden': !isDropdownOpen, 'transition-all duration-300': true }" class="py-2 space-y-2 pl-8">
-            <li v-for="category in categories" :key="category.id">
+            <li v-for="category in categories" :key="category.id" @contextmenu.prevent="showContextMenu($event, category)">
               <a href="#" @click.prevent="filterNotes(category.id)" class="flex items-center p-2 text-gray-300 rounded-lg hover:bg-gray-700 transition duration-300">
                 <span class="text-sm">{{ category.name }}</span>
               </a>
             </li>
-            <!-- Add Category -->
-            <li>
-              <template v-if="!showCategoryInput">
-                <button @click="showCategoryInput = true" class="flex items-center p-2 text-gray-300 rounded-lg hover:bg-gray-700 transition duration-300">
-                  <svg class="w-5 h-5 text-gray-400 mr-3" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 5v14m7-7H5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                  </svg>
-                  <span class="text-sm">Add Category</span>
-                </button>
-              </template>
-              <template v-else>
-                <!-- Input for Adding Category -->
-                <input v-model="newCategory" @keyup.enter="createCategory" type="text" placeholder="Enter category name" class="w-full p-2 mt-2 text-white bg-transparent border-2 border-gray-600 focus:outline-none focus:border-blue-400" />
-              </template>
+            <li v-if="showCategoryInput">
+              <input v-model="newCategory" @keyup.enter="createCategory" type="text" placeholder="Enter category name" class="w-full p-2 mt-2 text-white bg-transparent border-2 border-gray-600 focus:outline-none focus:border-blue-400" />
+            </li>
+            <li v-else>
+              <button @click="showCategoryInput = true" class="flex items-center p-2 text-gray-300 rounded-lg hover:bg-gray-700 transition duration-300">
+                <svg class="w-5 h-5 text-gray-400 mr-3" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 5v14m7-7H5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                <span class="text-sm">Add Category</span>
+              </button>
             </li>
           </ul>
         </li>
-
-        <!-- Archives Menu -->
+        <!-- Archived Notes -->
         <li>
           <a href="#" @click.prevent="filterNotes('archived')" class="flex items-center p-2 text-gray-300 rounded-lg hover:bg-gray-700 transition duration-300">
             <span class="text-sm">Arsip</span>
           </a>
         </li>
       </ul>
+    </div>
+    <!-- Context Menu for Deleting Category -->
+    <div v-if="contextMenuVisible" :style="{ top: `${contextMenuPosition.y}px`, left: `${contextMenuPosition.x}px` }"
+      class="absolute bg-gray-700 text-white p-2 rounded-lg shadow-lg">
+      <button @click="deleteCategory(contextMenuCategory)" class="text-sm hover:bg-gray-600 p-2 rounded-md">Delete Category</button>
     </div>
   </aside>
 </template>
@@ -77,7 +74,10 @@ export default {
     return {
       isDropdownOpen: false,
       showCategoryInput: false,
-      newCategory: ''
+      newCategory: '',
+      contextMenuVisible: false,
+      contextMenuCategory: null,
+      contextMenuPosition: { x: 0, y: 0 }
     };
   },
   methods: {
@@ -93,7 +93,35 @@ export default {
         this.newCategory = '';
         this.showCategoryInput = false;
       }
+    },
+    showContextMenu(event, category) {
+      this.contextMenuCategory = category;
+      this.contextMenuPosition = { x: event.clientX, y: event.clientY };
+      this.contextMenuVisible = true;
+    },
+    deleteCategory(category) {
+      this.$emit('delete-category', category.id);
+      this.contextMenuVisible = false;
+    },
+    closeContextMenu() {
+      this.contextMenuVisible = false;
     }
+  },
+  mounted() {
+    window.addEventListener('click', this.closeContextMenu);
+  },
+  beforeUnmount() {
+    window.removeEventListener('click', this.closeContextMenu);
   }
 };
 </script>
+
+<style scoped>
+.context-menu {
+  position: absolute;
+  background-color: #333;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+}
+</style>
