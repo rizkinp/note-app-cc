@@ -14,7 +14,7 @@ class NoteService {
   // Get All Notes
   async getAllNotes() {
     const notes = await Note.findAll({
-      where: { is_deleted: false },
+      where: { is_deleted: false, is_archived: false },
       order: [["createdAt", "DESC"]],
     });
 
@@ -22,9 +22,9 @@ class NoteService {
   }
 
   //Get Note by Category
-  async getNoteByCategory(categoryId: number) {
+  async getNotesByCategory(categoryId: number) {
     return await Note.findAll({
-      where: { categoryId, is_deleted: false },
+      where: { categoryId,is_archived: false, is_deleted: false },
       order: [["createdAt", "DESC"]],
     });
   }
@@ -32,14 +32,6 @@ class NoteService {
   // Get Note by ID
   async getNoteById(id: number) {
     return await Note.findByPk(id);
-  }
-
-  // Get Notes by Category
-  async getNotesByCategory(categoryId: number) {
-    return await Note.findAll({
-      where: { categoryId, is_deleted: false },
-      order: [["createdAt", "DESC"]],
-    });
   }
 
   //Get Notes by isPinned
@@ -50,46 +42,41 @@ class NoteService {
     });
   }
 
+  async getNotesByIsArchived() {
+    return await Note.findAll({
+      where: { is_archived : true, is_deleted: false },
+      order: [["createdAt", "DESC"]],
+    });
+  }
+
   // Search Notes
   async searchNotes(
     query: string,
-    startDate: string,
-    endDate: string,
     sortOrder: 'ASC' | 'DESC',
-    categoryId?: number 
+    dateFilter?: 'newest' | 'oldest'
   ) {
-    const whereCondition: any = { is_deleted: false };
-  
-    
+    const whereCondition: any = { is_deleted: false, is_archived: false };
     if (query) {
       whereCondition[Op.or] = [
         { title: { [Op.like]: `%${query}%` } },
         { content: { [Op.like]: `%${query}%` } },
       ];
     }
-  
-
-    if (startDate && !isNaN(Date.parse(startDate))) {
-      whereCondition.createdAt = {
-        [Op.gte]: new Date(startDate), 
-      };
-    }
-    if (endDate && !isNaN(Date.parse(endDate))) {
-      whereCondition.createdAt = {
-        [Op.lte]: new Date(endDate), 
-      };
-    }
-  
-    if (categoryId) {
-      whereCondition.categoryId = categoryId;
+    let order: [string, string][] = [];
+    
+    if (dateFilter === 'newest') {
+      order.push(['createdAt', 'DESC']);
+    } else if (dateFilter === 'oldest') {
+      order.push(['createdAt', 'ASC']);
+    } else {
+      order.push(['title', sortOrder]);
     }
   
     return await Note.findAll({
       where: whereCondition,
-      order: [['createdAt', sortOrder]], 
+      order: order,
     });
   }
-  
 
   // Update Note
   async updateNote(id: number, data: UpdateNoteDTO) {
