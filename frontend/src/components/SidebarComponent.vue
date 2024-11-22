@@ -1,5 +1,5 @@
 <template>
-  <aside class="top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0 bg-gray-800 text-white" aria-label="Sidebar">
+  <aside class="top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0 bg-gray-800 text-white flex flex-col justify-between" aria-label="Sidebar">
     <div class="h-full px-4 py-6">
       <div class="text-2xl font-semibold mb-6 text-center">
         <span class="text-blue-400">Note App</span>
@@ -53,6 +53,15 @@
         </li>
       </ul>
     </div>
+
+    <!-- Logout Button -->
+    <button @click="logout" class="w-full p-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition duration-300 flex items-center justify-center">
+      <svg class="w-5 h-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M10 17l5-5-5-5v3H3v4h7v3zM18 3h-2v8h2V3z" />
+      </svg>
+      <span class="text-sm">Logout</span>
+    </button>
+
     <!-- Context Menu for Deleting Category -->
     <div v-if="contextMenuVisible" :style="{ top: `${contextMenuPosition.y}px`, left: `${contextMenuPosition.x}px` }"
       class="absolute bg-gray-700 text-white p-2 rounded-lg shadow-lg">
@@ -60,6 +69,7 @@
     </div>
   </aside>
 </template>
+
 
 <script>
 export default {
@@ -105,6 +115,9 @@ export default {
     },
     closeContextMenu() {
       this.contextMenuVisible = false;
+    },
+    logout() {
+      this.$emit('logout');
     }
   },
   mounted() {
@@ -118,7 +131,7 @@ export default {
 
 <style scoped>
 .context-menu {
-  position: absolute;
+  position: fixed;
   background-color: #333;
   color: white;
   padding: 10px;

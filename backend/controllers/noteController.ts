@@ -2,44 +2,57 @@ import { Request, Response } from "express";
 import noteService from "../services/noteService";
 import { successResponse, errorResponse } from "../utils/responseHelper";
 import { CreateNoteDTO, UpdateNoteDTO, NoteResponseDTO } from "../dtos/noteDTO";
+import exp from "constants";
 
 // Create Note
 export const createNote = async (req: Request, res: Response) => {
   try {
     const data: CreateNoteDTO = req.body;
+    const userId = req.userId;
 
-    // Validation ID
-    if (!data.categoryId) {
-      return errorResponse(res, "categoryId is required.", 400);
+    if (!userId) {
+      return errorResponse(res, "User not authenticated.");
     }
 
-    const note = await noteService.createNote(data);
-    successResponse(res, note, "Note created successfully.");
-  } catch (error) {
-    errorResponse(res, (error as Error).message);
-  }
-};
+    // Buat catatan baru
+    const note = await noteService.createNote(userId, data);
 
-// Get All Notes
-export const getAllNotes = async (req: Request, res: Response) => {
-  try {
+    // Ambil semua catatan pengguna setelah catatan baru dibuat
+    const { notes } = await noteService.getAllNotes(userId);
 
-    const { notes } = await noteService.getAllNotes();
-
+    // Kirimkan respons dengan data gabungan
     successResponse(
       res,
-      { notes },
-      "Notes fetched successfully."
+      { createdNote: note, allNotes: notes },
+      "Note created and all notes fetched successfully."
     );
   } catch (error) {
     errorResponse(res, (error as Error).message);
   }
 };
 
+//Get All Notes
+export const getAllNotes = async (req: Request, res: Response) => {
+  try {
+    const userId = req.userId;  
+    if (!userId) {
+      return errorResponse(res, "User not authenticated.");
+    }
+    const notes = await noteService.getAllNotes(userId);
+    successResponse(res, notes, "Notes fetched successfully.");
+  } catch (error) {
+    errorResponse(res, (error as Error).message);
+  }
+}
+
 // Get Note By ID
 export const getNoteById = async (req: Request, res: Response) => {
   try {
-    const note = await noteService.getNoteById(Number(req.params.id));
+    const userId = req.userId;
+    if (!userId) {
+      return errorResponse(res, "User not authenticated.");
+    }
+    const note = await noteService.getNoteById(userId, Number(req.params.id));
     if (!note) {
       return errorResponse(res, "Note not found.");
     }
@@ -57,42 +70,61 @@ export const getNoteById = async (req: Request, res: Response) => {
   }
 };
 
-//Get Note By Category
+// Get Notes By Category
 export const getNotesByCategory = async (req: Request, res: Response) => {
   try {
-    const notes = await noteService.getNotesByCategory(Number(req.params.id));
+    const userId = req.userId; 
+    if (!userId) {
+      return errorResponse(res, "User not authenticated.");
+    }
+    const notes = await noteService.getNotesByCategory(userId, Number(req.params.id));
     successResponse(res, notes, "Notes fetched successfully.");
   } catch (error) {
     errorResponse(res, (error as Error).message);
   }
-}
-//Get Notes by isPinned
+};
+
+// Get Notes by isPinned
 export const getNotesByIsPinned = async (req: Request, res: Response) => {
   try {
-    const notes = await noteService.getNotesByIsPinned();
+    const userId = req.userId;
+    if (!userId) {
+      return errorResponse(res, "User not authenticated.");
+    }
+    const notes = await noteService.getNotesByIsPinned(userId);
     successResponse(res, notes, "Notes fetched successfully.");
   } catch (error) {
     errorResponse(res, (error as Error).message);
   }
-}
-//Get Notes by isArchived
+};
+
+// Get Notes by isArchived
 export const getNotesByIsArchived = async (req: Request, res: Response) => {
   try {
-    const notes = await noteService.getNotesByIsArchived();
+    const userId = req.userId;
+    if (!userId) {
+      return errorResponse(res, "User not authenticated.");
+    }
+    const notes = await noteService.getNotesByIsArchived(userId);
     successResponse(res, notes, "Notes fetched successfully.");
   } catch (error) {
     errorResponse(res, (error as Error).message);
   }
-}
+};
+
 // Search Notes
 export const searchNotes = async (req: Request, res: Response) => {
   try {
+    const userId = req.userId;  
+    if (!userId) {
+      return errorResponse(res, "User not authenticated.");
+    }
     const query = req.query.search as string || ''; // Kata kunci pencarian
     const sortOrder = (req.query.sortOrder as 'ASC' | 'DESC') || 'DESC'; // Urutan sort (ASC/DESC)
     const dateFilter = req.query.dateFilter as 'newest' | 'oldest' | undefined; // Filter berdasarkan tanggal
 
     // Memanggil fungsi searchNotes dari service
-    const notes = await noteService.searchNotes(query, sortOrder, dateFilter);
+    const notes = await noteService.searchNotes(userId, query, sortOrder, dateFilter);
 
     if (notes.length === 0) {
       return errorResponse(res, 'No notes found.', 404);
@@ -107,11 +139,12 @@ export const searchNotes = async (req: Request, res: Response) => {
 // Update Note
 export const updateNote = async (req: Request, res: Response) => {
   try {
+    const userId = req.userId;
+    if (!userId) {
+      return errorResponse(res, "User not authenticated.");
+    }
     const data: UpdateNoteDTO = req.body;
-    const { affectedRows } = await noteService.updateNote(
-      Number(req.params.id),
-      data
-    );
+    const { affectedRows } = await noteService.updateNote(userId, Number(req.params.id), data);
     successResponse(res, { affectedRows }, "Note updated successfully.");
   } catch (error) {
     errorResponse(res, (error as Error).message);
@@ -121,7 +154,11 @@ export const updateNote = async (req: Request, res: Response) => {
 // Delete Note
 export const deleteNote = async (req: Request, res: Response) => {
   try {
-    const note = await noteService.deleteNote(Number(req.params.id));
+    const userId = req.userId; 
+    if (!userId) {
+      return errorResponse(res, "User not authenticated.");
+    }
+    const note = await noteService.deleteNote(userId, Number(req.params.id));
     successResponse(res, note, "Note deleted successfully.");
   } catch (error) {
     errorResponse(res, (error as Error).message);
@@ -131,7 +168,11 @@ export const deleteNote = async (req: Request, res: Response) => {
 // Delete All Notes
 export const deleteAllNotes = async (req: Request, res: Response) => {
   try {
-    const notes = await noteService.deleteAllNotes();
+    const userId = req.userId; 
+    if (!userId) {
+      return errorResponse(res, "User not authenticated.");
+    }
+    const notes = await noteService.deleteAllNotes(userId);
     successResponse(res, notes, "All notes deleted successfully.");
   } catch (error) {
     errorResponse(res, (error as Error).message);
@@ -141,6 +182,10 @@ export const deleteAllNotes = async (req: Request, res: Response) => {
 // Pin or Unpin Note
 export const pinNote = async (req: Request, res: Response) => {
   try {
+    const userId = req.userId;
+    if (!userId) {
+      return errorResponse(res, "User not authenticated.");
+    }
     const { is_pinned } = req.body;
 
     // Validasi is_pinned
@@ -149,12 +194,8 @@ export const pinNote = async (req: Request, res: Response) => {
     }
 
     // Update status pinning
-    const note = await noteService.pinNote(Number(req.params.id), is_pinned);
-    successResponse(
-      res,
-      note,
-      `Note ${is_pinned ? "pinned" : "unpinned"} successfully.`
-    );
+    const note = await noteService.pinNote(userId, Number(req.params.id), is_pinned);
+    successResponse(res, note, `Note ${is_pinned ? "pinned" : "unpinned"} successfully.`);
   } catch (error) {
     errorResponse(res, (error as Error).message);
   }
@@ -163,6 +204,10 @@ export const pinNote = async (req: Request, res: Response) => {
 // Archive or Unarchive Note
 export const archiveNote = async (req: Request, res: Response) => {
   try {
+    const userId = req.userId;
+    if (!userId) {
+      return errorResponse(res, "User not authenticated.");
+    }
     const { is_archived } = req.body;
 
     // Validasi is_archived
@@ -171,12 +216,8 @@ export const archiveNote = async (req: Request, res: Response) => {
     }
 
     // Update status arsip
-    const note = await noteService.archiveNote(Number(req.params.id), is_archived);
-    successResponse(
-      res,
-      note,
-      `Note ${is_archived ? "archived" : "unarchived"} successfully.`
-    );
+    const note = await noteService.archiveNote(userId, Number(req.params.id), is_archived);
+    successResponse(res, note, `Note ${is_archived ? "archived" : "unarchived"} successfully.`);
   } catch (error) {
     errorResponse(res, (error as Error).message);
   }

@@ -119,9 +119,7 @@ export function useNote() {
 
   const archiveNote = async (id, data) => {
     try {
-      // Mengirim permintaan PUT ke server untuk mengubah status arsip
       await api.put(`/notes/${id}/archive`, data);
-      // Mengambil catatan terbaru setelah pembaruan
       fetchNotes();
     } catch (err) {
       error.value = `Error archiving note: ${err.message || err}`;

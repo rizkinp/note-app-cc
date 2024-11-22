@@ -1,7 +1,7 @@
 <template>
   <div class="flex h-screen overflow-hidden">
     <!-- Sidebar -->
-    <SidebarComponent :categories="categories" @filter-notes="filterNotes" @create-category="createCategory" @delete-category="deleteCategoryHandler"
+    <SidebarComponent :categories="categories" @filter-notes="filterNotes" @create-category="createCategory" @delete-category="deleteCategoryHandler" @logout="logoutHandler"
       class="w-64 h-full" />
 
     <!-- Main Content -->
@@ -22,6 +22,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { useNote } from '@/composable/useNote';
 import { useCategory } from '@/composable/useCategory';
+import { useAuth } from '@/composable/useAuth';
 import SidebarComponent from '@/components/SidebarComponent.vue';
 import NoteList from '@/components/NoteList.vue';
 import NoteEditor from '@/components/NoteEditor.vue';
@@ -36,6 +37,7 @@ export default {
   setup() {
     const { notes, fetchNotes, fetchNotesByCategory, fetchNotesByIsArchived, createNote, updateNote, dataFilter, archiveNote, deleteAllNotes, deleteNote } = useNote();
     const { categories, fetchCategories, createCategory, deleteCategory } = useCategory();
+    const {logout} = useAuth();
     const currentNote = ref(null);
     const searchQuery = ref("");
     const isArchived = ref(false);
@@ -120,6 +122,11 @@ export default {
       isArchived.value = false;
     };
 
+    // Logout
+    const logoutHandler= () => {
+      logout();
+    };
+
     return {
       notes,
       archiveNote,
@@ -137,7 +144,8 @@ export default {
       isArchived,
       deleteAllNotesHandler,
       deleteNoteHandler,
-      deleteCategoryHandler
+      deleteCategoryHandler,
+      logoutHandler
     };
   },
 };

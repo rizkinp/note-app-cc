@@ -1,9 +1,15 @@
 import { Model, DataTypes } from "sequelize";
 import { sequelize } from "../config/db";
+import User from "./userModel"; // Import the User model
 
 class Category extends Model {
   public id!: number;
   public name!: string;
+  public is_deleted!: boolean;
+  public is_pinned!: boolean;
+  public userId!: number;  // Add userId field for the foreign key
+  public createdAt!: Date;
+  public updatedAt!: Date;
 }
 
 Category.init(
@@ -25,6 +31,14 @@ Category.init(
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
+    userId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,  // userId is required
+      references: {
+        model: "users",  // Link to users table
+        key: "id",
+      },
+    },
     createdAt: {
       type: DataTypes.DATE,
       allowNull: false,
@@ -41,5 +55,8 @@ Category.init(
     tableName: "categories",
   }
 );
+
+// Define relationship
+Category.belongsTo(User, { foreignKey: "userId" });
 
 export default Category;
