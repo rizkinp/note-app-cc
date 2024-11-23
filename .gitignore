@@ -21,4 +21,5 @@ npm-debug.log*
 
 # Build
 /backend/dist/
+/frontend/dist/
 /build/
