@@ -4,6 +4,7 @@
   "main": "main.ts",
   "scripts": {
     "start": "tsc && node dist/main.js",
+    "migrate": "npx sequelize-cli db:migrate",
     "dev": "nodemon main.ts",
     "build": "tsc"
   },
