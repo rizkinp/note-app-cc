@@ -16,9 +16,7 @@ export function useAuth() {
 
     try {
       const response = await api.post('/login', { email, password });
-      console.log('Login Response:', response.data);
       token.value = response.data.data.token;
-      console.log('Token:', token.value);
       localStorage.setItem('token', token.value);
       user.value = response.data.user;
       isLoading.value = false;
