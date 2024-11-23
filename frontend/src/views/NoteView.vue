@@ -1,7 +1,7 @@
 <template>
   <div class="flex h-screen overflow-hidden">
     <!-- Sidebar -->
-    <SidebarComponent :categories="categories" @filter-notes="filterNotes" @create-category="createCategory" @delete-category="deleteCategoryHandler" @logout="logoutHandler"
+    <SidebarComponent :categories="categories" @filter-notes="filterNotes" @create-category="createCategory" @delete-category="deleteCategoryHandler" @logout="logoutHandler" @add-note="addNewNote"
       class="w-64 h-full" />
 
     <!-- Main Content -->
@@ -47,6 +47,9 @@ export default {
       fetchCategories();
       fetchNotes();
     });
+    const addNewNote = () => {
+    currentNote.value = { title: '', content: '', categoryId: null };
+  };
     // Filter notes
     const filteredNotes = computed(() => {
       let sortedNotes = notes.value;
@@ -128,6 +131,7 @@ export default {
     };
 
     return {
+      addNewNote,
       notes,
       archiveNote,
       archiveNoteHandler,

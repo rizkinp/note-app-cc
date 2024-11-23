@@ -56,13 +56,13 @@
 
 <script>
 import { ref } from 'vue';
-import { useRouter } from 'vue-router'; // Impor useRouter
+import { useRouter } from 'vue-router';
 import { useAuth } from '../composable/useAuth';
 
 export default {
   setup() {
     const { register, error, isLoading } = useAuth();
-    const router = useRouter(); // Mendapatkan instance router
+    const router = useRouter();
 
     const username = ref('');
     const email = ref('');
@@ -71,9 +71,7 @@ export default {
     const handleRegister = async () => {
       try {
         await register(username.value, email.value, password.value);
-        console.log(username.value, email.value, password.value);
-        // Redirect ke halaman login setelah registrasi berhasil
-        router.push('/login'); // Gunakan router.push
+        router.push('/login');
       } catch (err) {
         console.error('Registration error:', err);
       }
