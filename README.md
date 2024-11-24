@@ -10,8 +10,8 @@ Note App adalah aplikasi yang memungkinkan pengguna untuk:
 
 ### Proyek ini dibagi menjadi dua bagian utama:
 
-Frontend: Dibangun menggunakan Vue.js untuk antarmuka pengguna.
-Backend: Dibangun menggunakan Express.js dan Sequelize untuk manajemen API dan database.
+#### Frontend: Dibangun menggunakan Vue.js untuk antarmuka pengguna.
+#### Backend: Dibangun menggunakan Express.js dan Sequelize untuk manajemen API dan database.
 
 ## Tech Stack
 ### Frontend
@@ -30,7 +30,7 @@ Backend: Dibangun menggunakan Express.js dan Sequelize untuk manajemen API dan d
 ## Instalasi
 ### Clone repository
 ```bash
-git clone https://github.com/username/note-app-cc.git
+git clone https://github.com/rizkinp/note-app-cc.git
 cd note-app-cc
 ```
 ### Instalasi Frontend
@@ -88,6 +88,8 @@ Start Server
 npm start
 ```
 API Running in http://localhost:5000
+### API Documentation
+https://documenter.getpostman.com/view/30196710/2sAYBUDXz2
 
 
 
