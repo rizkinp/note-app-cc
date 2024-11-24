@@ -98,9 +98,23 @@ https://documenter.getpostman.com/view/30196710/2sAYBUDXz2
 ![image](https://github.com/user-attachments/assets/45e0fe2f-729d-4a85-a471-f2184c65fdba)
 ### Halaman Utama
 ![image](https://github.com/user-attachments/assets/d0028cd4-4ba6-42e5-b9a7-a062f533450d)
-### Tambah Katego
-
+### Tambah Kategori
+Klik Add Category, Klik input, Type, And Enter
 ![image](https://github.com/user-attachments/assets/d916fc65-60b7-4c02-b4ef-73877a76c3b5)
+### Tambah Catatan
+![image](https://github.com/user-attachments/assets/971f4485-cb9c-420b-b484-e0ae14251420)
+### Update Catatan
+![image](https://github.com/user-attachments/assets/d0efb378-6dda-4ead-90e4-71aa527bea16)
+### Pin Catatan
+![image](https://github.com/user-attachments/assets/2a505e9d-27b8-4986-ba7b-3c473c484c4c)
+### Arsip Catatan
+![image](https://github.com/user-attachments/assets/0bc4120b-5d7f-4b0f-8eae-e1c33ef17b1c)
+### Filter and Search
+![image](https://github.com/user-attachments/assets/5a486b96-7f62-41da-8bdb-ef61c877d233)
+
+
+
+
 
 
 
