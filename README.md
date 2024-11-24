@@ -91,6 +91,17 @@ API Running in http://localhost:5000
 ### API Documentation
 https://documenter.getpostman.com/view/30196710/2sAYBUDXz2
 
+## Screenshoot
+### Halaman Register
+![image](https://github.com/user-attachments/assets/e30cdd6e-ab89-4aaa-9afc-ce2836189c31)
+### Halaman Login
+![image](https://github.com/user-attachments/assets/45e0fe2f-729d-4a85-a471-f2184c65fdba)
+### Halaman Utama
+![image](https://github.com/user-attachments/assets/d0028cd4-4ba6-42e5-b9a7-a062f533450d)
+### Tambah Katego
+
+![image](https://github.com/user-attachments/assets/d916fc65-60b7-4c02-b4ef-73877a76c3b5)
+
 
 
 
